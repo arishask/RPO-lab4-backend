@@ -79,10 +79,11 @@ public class UserController {
         if (uu.isPresent()) {
             User u = uu.get();
             for (Museum m : museums) {
-                Optional<Museum> mm = museumRepository.findById(m.id);
+                Optional<Museum>
+                        mm = museumRepository.findById(m.id);
                 if (mm.isPresent()) {
-                    u.addMuseum(mm.get());
-                    ++cnt;
+                    u.museums.add(mm.get());
+                    cnt++;
                 }
             }
             userRepository.save(u);

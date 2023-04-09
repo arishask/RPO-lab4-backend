@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -20,10 +21,11 @@ import java.util.Enumeration;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
-
 public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-    AuthenticationFilter(final RequestMatcher requiresAuth) {
+    AuthenticationFilter(final RequestMatcher requiresAuth, AuthenticationManager am) {
+
         super(requiresAuth);
+        this.setAuthenticationManager(am);
     }
 
     @Override
