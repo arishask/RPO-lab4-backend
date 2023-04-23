@@ -12,6 +12,7 @@ import com.example.backend.repositories.UserRepository;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/auth")
 public class LoginController {
@@ -49,10 +50,12 @@ public class LoginController {
                 User u = uu.get();
                 u.token = null;
                 userRepository.save(u);
-                return new ResponseEntity(HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
         }
-        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
     }
+
 }
 
