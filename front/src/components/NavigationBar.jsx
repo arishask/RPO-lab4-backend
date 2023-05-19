@@ -50,7 +50,7 @@ class NavigationBarClass extends React.Component {
                     <Nav.Link onClick={this.logout}><FontAwesomeIcon icon={faUser} fixedWidth />{' '}Выход</Nav.Link>
                 }
                 { !this.props.user &&
-                    <Nav.Link as={Link} to="/login"><FontAwesomeIcon icon={faUser} fixedWidth />{' '}Вход</Nav.Link>
+                    <Nav.Link a={Link} to="/login"><FontAwesomeIcon icon={faUser} fixedWidth />{' '}Вход</Nav.Link>
                 }
             </Navbar>
         );
