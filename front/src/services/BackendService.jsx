@@ -1,8 +1,5 @@
 import axios from 'axios'
 import Utils from "../utils/Utils";
-// import * as alertActions from "@testing-library/user-event/dist/clear";
-// import {store} from "../utils/Rdx";
-// import {alertActions} from "../utils/Rdx";
 import {alertActions, store} from "../utils/Rdx";
 
 const API_URL = 'http://localhost:8081/api/v1'
@@ -17,9 +14,29 @@ class BackendService {
     logout() {
         return axios.get(`${AUTH_URL}/logout`, { headers : {Authorization : Utils.getToken()}})
     }
+    /* Countries */
+
+    retrieveAllCountries(page, limit) {
+        return axios.get(`${API_URL}/countries`);
+    }
+
+    retrieveCountry(id) {
+        return axios.get(`${API_URL}/countries/${id}`);
+    }
+
+    createCountry(country) {
+        return axios.post(`${API_URL}/countries`, country);
+    }
+
+    updateCountry(country) {
+        return axios.put(`${API_URL}/countries/${country.id}`, country);
+    }
+
+    deleteCountries(countries) {
+        return axios.post(`${API_URL}/deletecountries`, countries);
+    }
 }
 
-export default new BackendService()
 
 function showError(msg)
 {
@@ -49,3 +66,5 @@ axios.interceptors.response.use(undefined,
             showError(error.message)
         return Promise.reject(error);
     })
+
+export default new BackendService()
