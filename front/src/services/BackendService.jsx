@@ -35,8 +35,8 @@ class BackendService {
     deleteCountries(countries) {
         return axios.post(`${API_URL}/deletecountries`, countries);
     }
-}
 
+}
 
 function showError(msg)
 {

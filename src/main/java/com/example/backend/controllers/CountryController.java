@@ -31,6 +31,7 @@ public class CountryController {
                 .orElseThrow(()->new DataValidationException("Страна с таким индексом не найдена"));
         return ResponseEntity.ok(country);
     }
+
     @GetMapping("/countries/{id}/artists")
     public ResponseEntity<List<Artist>> getCountryArtists(@PathVariable(value = "id") Long countryId) {
         Optional<Country> cc = countryRepository.findById(countryId);
@@ -41,15 +42,12 @@ public class CountryController {
     }
 
     @PostMapping("/countries")
-    public ResponseEntity<Object>
-    createCountry(@RequestBody Country country)
-            throws DataValidationException {
+    public ResponseEntity<Object> createCountry(@RequestBody Country country) throws DataValidationException {
         try {
             Country nc = countryRepository.save(country);
             return new ResponseEntity<Object>(nc, HttpStatus.OK);
         }
         catch(Exception ex) {
-            String error;
             if (ex.getMessage().contains("countries.name_UNIQUE"))
                 throw new DataValidationException("Эта страна уже есть в базе");
             else
