@@ -1,87 +1,92 @@
-import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
-import Alert from './Alert';
-import BackendService from '../services/BackendService';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, {useId, useState, useEffect} from 'react';
+import {useNavigate, useParams} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faChevronLeft, faSave} from "@fortawesome/free-solid-svg-icons";
+import {alertActions} from "../utils/Rdx";
+import {connect, useDispatch} from "react-redux";
+import BackendService from "../services/BackendService";
 
-const CountryComponent = () => {
-    const { id } = useParams(); // Получаем параметр id из URL
+const CountryComponent = props => {
+
+    const [Name, setName] = useState([]);
+    const [hidden, setHidden] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const nameId = useId();
+    const params = useParams();
 
-    const [country, setCountry] = useState({});
-    const [showAlert, setShowAlert] = useState(false);
+    const loadCountry = () => {
+        BackendService.retrieveCountry(params.id)
+            .then(
+                resp => {
+                    setName(resp.data.name);
+                    setHidden(false )
+                })
+            .catch(()=> { setHidden(true )})
+    }
 
     useEffect(() => {
-        retrieveCountry();
-    }, []);
+        if (parseInt(params.id) != -1) {
+            loadCountry();
+        }
+    }, [])
 
-    const retrieveCountry = () => {
-        BackendService.retrieveCountry(id)
-            .then((resp) => {
-                setCountry(resp.data);
-            })
-            .catch((error) => {
-                console.error('Ошибка при получении данных страны:', error);
-            });
-    };
+    const onSubmit = e => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const formJson = Object.fromEntries(formData.entries());
+        let err = null;
+        if (!formJson.name) {
+            err = "Название страны должно быть указано";
+        }
+        if (err) {
+            dispatch(alertActions.error(err))
+        }
+        let country = { id: params.id, name: formJson.name};
+        if (parseInt(country.id) === -1) {
+            BackendService.createCountry(country)
+                .then(()=> navigate("/countries"))
+                .catch(()=> {})
+        }
+        else {
+            BackendService.updateCountry(country)
+                .then(()=> navigate("/countries"))
+                .catch(()=>{})
+        }
+    }
 
-    const updateCountry = () => {
-        BackendService.updateCountry(country)
-            .then(() => {
-                // Обновление страны выполнено успешно
-                navigate('/countries'); // Переход на страницу со списком стран
-            })
-            .catch((error) => {
-                console.error('Ошибка при обновлении страны:', error);
-                setShowAlert(true); // Отображение сообщения об ошибке
-            });
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setCountry((prevCountry) => ({
-            ...prevCountry,
-            [name]: value,
-        }));
-    };
-
-    const closeAlert = () => {
-        setShowAlert(false);
-    };
-
+    if (hidden)
+        return null;
     return (
-        <div className="m-4">
-            <h3>Страна: {country.name}</h3>
-            <div className="row my-2">
-                <div className="col">
-                    <label htmlFor="name">Название страны:</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={country.name || ''}
-                        onChange={handleInputChange}
-                        className="form-control"
-                    />
+        <div className="container">
+            <div className="row">
+                <div className="col-md-6">
+                    <h3>Страна</h3>
+                </div>
+                <div className="col-md-6 clearfix">
+                    <button className="btn btn-outline-secondary float-end"
+                            onClick={ () => { navigate(-1) } }>
+                        <FontAwesomeIcon icon={faChevronLeft}/>{' '}Назад</button>
                 </div>
             </div>
-            <div className="row my-2">
-                <div className="col">
-                    <button className="btn btn-primary" onClick={updateCountry}>
-                        <FontAwesomeIcon icon={faSave} /> Сохранить
-                    </button>
+            <div className="row">
+                <div className="col-md-12">
+                    <form method="post" onSubmit={onSubmit}>
+                        <label className="form-label" htmlFor={nameId}>Название:</label>
+                        <input id={nameId} name="name"
+                               className="form-control"
+                               defaultValue={Name}
+                               autoComplete="off"/>
+                        <button
+                            className="btn btn-outline-secondary mt-4"
+                            type="submit">
+                            <FontAwesomeIcon icon={faSave}/>{' '}Сохранить</button>
+                    </form>
                 </div>
             </div>
-            <Alert
-                title="Ошибка"
-                message="Произошла ошибка при обновлении страны."
-                ok={closeAlert}
-                close={closeAlert}
-                modal={showAlert}
-            />
         </div>
-    );
-};
+    )
+}
 
-export default CountryComponent;
+export default connect()(CountryComponent);

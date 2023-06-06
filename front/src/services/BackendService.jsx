@@ -2,8 +2,10 @@ import axios from 'axios'
 import Utils from "../utils/Utils";
 import {alertActions, store} from "../utils/Rdx";
 
+
 const API_URL = 'http://localhost:8081/api/v1'
 const AUTH_URL = 'http://localhost:8081/auth'
+
 
 class BackendService {
 
@@ -17,26 +19,27 @@ class BackendService {
     /* Countries */
 
     retrieveAllCountries(page, limit) {
-        return axios.get(`${API_URL}/countries`);
+        return axios.get(`${API_URL}/countries?page=${page}&limit=${limit}`, {headers : {Authorization : Utils.getToken()}});
     }
 
     retrieveCountry(id) {
-        return axios.get(`${API_URL}/countries/${id}`);
+        return axios.get(`${API_URL}/countries/${id}`, {headers : {Authorization : Utils.getToken()}});
     }
 
     createCountry(country) {
-        return axios.post(`${API_URL}/countries`, country);
+        return axios.post(`${API_URL}/countries`, country, {headers : {Authorization : Utils.getToken()}});
     }
 
     updateCountry(country) {
-        return axios.put(`${API_URL}/countries/${country.id}`, country);
+        return axios.put(`${API_URL}/countries/${country.id}`, country, {headers : {Authorization : Utils.getToken()}});
     }
 
     deleteCountries(countries) {
-        return axios.post(`${API_URL}/deletecountries`, countries);
+        return axios.post(`${API_URL}/deletecountries`, countries, {headers : {Authorization : Utils.getToken()}});
     }
 
 }
+export default new BackendService()
 
 function showError(msg)
 {
@@ -67,4 +70,3 @@ axios.interceptors.response.use(undefined,
         return Promise.reject(error);
     })
 
-export default new BackendService()

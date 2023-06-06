@@ -56,10 +56,10 @@ const CountryListComponent = props => {
     }
 
     const refreshCountries = () => {
-        BackendService.retrieveAllCountries()
+        BackendService.retrieveAllCountries(0,10)
             .then(
                 resp => {
-                    setCountries(resp.data);
+                    setCountries(resp.data.content);
                     setHidden(false);
                 })
             .catch(()=> { setHidden(true )})
@@ -68,6 +68,7 @@ const CountryListComponent = props => {
 
     useEffect(() => {
         refreshCountries();
+        console.log('countries', countries);
     }, [])
 
     const updateCountryClicked = id => {
