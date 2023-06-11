@@ -4,10 +4,6 @@ import BackendService from '../services/BackendService';
 import {useNavigate} from "react-router-dom";
 import {connect, useDispatch} from 'react-redux'
 import {userActions} from "../utils/Rdx";
-// import {alertActions, store, userActions} from "../utils/Rdx";
-// import NavigationBar from "./NavigationBar";
-// import axios from "axios";
-
 
 export default connect()(function Login() {
     const [username, setUsername] = useState('');
@@ -25,10 +21,6 @@ export default connect()(function Login() {
     function handleChangePassword(e) {
         setPassword(e.target.value);
     }
-
-    // function showError(msg) {
-    //     store.dispatch(alertActions.error(msg))
-    // }
 
     function handleSubmit(e) {
         e.preventDefault();
